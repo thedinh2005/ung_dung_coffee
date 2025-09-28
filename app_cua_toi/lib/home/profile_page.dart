@@ -1,96 +1,183 @@
-// Import thư viện Material (cung cấp widget UI chính của Flutter)
 import 'package:flutter/material.dart';
 
-// ProfilePage là một StatelessWidget (không có trạng thái thay đổi)
-// Nhận vào tham số `name` và `email` để hiển thị thông tin người dùng
 class ProfilePage extends StatelessWidget {
-  final String name; // tên người dùng
-  final String email; // email người dùng
+  final String name;
+  final String email;
+  final double walletBalance;
 
-  // Constructor (có giá trị mặc định nếu không truyền vào)
   const ProfilePage({
     super.key,
-    this.name = "Nguyễn Văn A", // tên mặc định (demo)
-    this.email = "nguyenvana@gmail.com", // email mặc định (demo)
+    this.name = "Nguyễn Văn A",
+    this.email = "nguyenvana@gmail.com",
+    this.walletBalance = 150000,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar (thanh trên cùng)
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text("Profile"), // tiêu đề thanh AppBar
-        backgroundColor: Colors.brown, // màu nền AppBar
+        title: const Text(
+          "Tài khoản",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.brown,
+        centerTitle: true,
+        elevation: 0,
       ),
-
-      // Nội dung chính của trang
-      body: Padding(
-        padding: const EdgeInsets.all(20), // lề xung quanh nội dung
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // ====== Avatar người dùng ======
-            const CircleAvatar(
-              radius: 50, // bán kính (kích thước avatar)
-              backgroundImage: AssetImage("assets/logo_coffee.png"),
-              // hình ảnh trong thư mục assets (cần khai báo trong pubspec.yaml)
-            ),
-            const SizedBox(height: 20), // khoảng cách
-            // ====== Hiển thị Tên người dùng ======
-            Text(
-              name, // lấy từ biến name
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold, // chữ đậm
+            // ====== Header (Avatar + Info) ======
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.brown,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  const CircleAvatar(
+                    radius: 45,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 60, color: Colors.brown),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    email,
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 8), // khoảng cách nhỏ
-            // ====== Hiển thị Email ======
-            Text(
-              email, // lấy từ biến email
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey, // chữ màu xám
-              ),
-            ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 30), // khoảng cách lớn
-            // ====== Nút chỉnh sửa thông tin ======
-            ElevatedButton.icon(
-              onPressed: () {
-                // sau này bạn có thể chuyển sang trang UpdateProfile ở đây
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.brown, // màu nền nút
-                foregroundColor: Colors.white, // màu chữ + icon
+            // ====== Wallet Card ======
+            Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24, // lề ngang trong nút
-                  vertical: 12, // lề dọc trong nút
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.account_balance_wallet,
+                      size: 40,
+                      color: Colors.brown,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        "Số dư ví: ${walletBalance.toStringAsFixed(0)} đ",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.brown,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text("Nạp tiền"),
+                    ),
+                  ],
                 ),
               ),
-              icon: const Icon(Icons.edit), // icon bút chỉnh sửa
-              label: const Text("Chỉnh sửa thông tin"), // chữ trong nút
             ),
 
-            const Spacer(), // đẩy nội dung bên trên lên, để nút đăng xuất nằm dưới cùng
-            // ====== Nút đăng xuất ======
-            ElevatedButton(
-              onPressed: () {
-                // Quay lại LoginPage và thay thế trang hiện tại (không cho back về Profile nữa)
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // nền đỏ
-                foregroundColor: Colors.white, // chữ trắng
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+            const SizedBox(height: 20),
+
+            // ====== Menu Options ======
+            _buildMenuItem(
+              icon: Icons.history,
+              title: "Lịch sử giao dịch",
+              color: Colors.blueGrey,
+              onTap: () {},
+            ),
+            _buildMenuItem(
+              icon: Icons.local_shipping,
+              title: "Đơn hàng gần đây",
+              subtitle: "Đã giao, đang giao",
+              color: Colors.orange,
+              onTap: () {},
+            ),
+            _buildMenuItem(
+              icon: Icons.settings,
+              title: "Cài đặt tài khoản",
+              color: Colors.grey,
+              onTap: () {},
+            ),
+
+            const SizedBox(height: 30),
+
+            // ====== Logout Button ======
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text("Đăng xuất"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
-              child: const Text("Đăng xuất"), // chữ trong nút
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Widget tái sử dụng cho menu
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(icon, color: color, size: 30),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        subtitle: subtitle != null ? Text(subtitle) : null,
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
       ),
     );
   }
